@@ -1,4 +1,3 @@
-@@ -0,0 +1,53 @@
 angular.module('app', ["firebase"]);
 
 angular.module('app').controller('InitCtrl', function ($scope, $firebaseArray, $firebaseObject) {

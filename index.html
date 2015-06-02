@@ -1,1 +1,123 @@
-
+@@ -0,0 +1,122 @@
+<!DOCTYPE html>
+<html>
+ 	<head>
+		<title>AngularJS Controllers</title>
+		<link rel="stylesheet" type="text/css" href="style.css">
+    		<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.0-beta.5/angular.min.js"></script>
+		<script src="https://cdn.firebase.com/js/client/2.2.4/firebase.js"></script>
+		<script src="https://cdn.firebase.com/libs/angularfire/1.1.1/angularfire.min.js"></script>
+ 		<script type="text/javascript" src="app.js"></script>
+	</head>
+	<body>
+		<div ng-app="app">
+			<div ng-controller="InitCtrl">
+				<div id="wrapper">
+					<table>
+						<tr>
+							<form ng-submit="addCharacters(newCharacter)">
+								<td></td>
+								<td><input size='4' type="number" ng-model="newCharacter.initiative"></td>
+								<td><select ng-model="newCharacter" ng-options="character.name for character in Monsters"></select></td>
+								<td><button type="submit">Add</button></td>
+							</form>
+						</tr>
+					</table>
+					<div id="first">
+						<table>
+							<tr>
+								<td id="col1"></td>
+								<td><b>Initiative</b></td>
+								<td><b>Name</b></td>
+								<td><b>AC</b></td>
+								<td><b>HP: Max</b></td>
+								<td><b>Current</b></td>
+								<td><b>Conditions</b></td>
+							</tr>
+							<tr ng-repeat="character in Characters | orderBy:'-initiative'">
+								<td id="col1"><button ng-if="!character.player" type="button" ng-click="Characters.$remove(character)">x</button></td>
+								<td><input size='4' type="number" ng-model="character.initiative" ng-change="Characters.$save(character)" ng-model-options="{ updateOn: 'default blur', debounce: {'default': 1000, 'blur': 0} }"></td>
+								<td><a href=# ng-click="CurrentCharacter(character)">{{ character.name }}</a></td>
+								<td><select ng-init='character.acSel' ng-model="character.acSel" ng-change="Characters.$save(character)" ng-options="ac for ac in character.ac"></td>
+								<td>{{ character.hp.max }}</td>
+								<td><input size='4' type="text" ng-model="character.hp.current" ng-change="character.hp.current = $eval(character.hp.current); Characters.$save(character)" ng-model-options="{ updateOn: 'default blur', debounce: {'default': 1000, 'blur': 0} }"></td>
+								<td><input ng-model="character.conditions" type="text" ng-change="Characters.$save(character)" ></td>
+							</tr>
+						</table><br><br>
+						<div id="spells">
+							<select ng-model="displaySpell" ng-options="name for (name, spell) in Spells"></select><br>
+							<i>{{ displaySpell.level }}</i><br>
+							<b>Casting Time: </b> {{ displaySpell.action }}<br>
+							<b>Range: </b> {{ displaySpell.range }}<br>
+							<b>Components: </b> {{ displaySpell.components }}<br>
+							<b>Duration: </b> {{ displaySpell.duration }}<br>
+							{{ displaySpell.description }}<br>
+						</div>
+					</div>
+					<div id="second">
+						<span id="head"><b>{{ Current.name }}</b><br></span>
+						<i>{{ Current.type }}</i><br>
+						<hr>
+						<b>Armor Class</b> {{ Current.acSel }}<br>
+						<b>Hit Points</b> {{ Current.hp.current }} ({{ Current.hd.size }})
+							<span ng-if="Current.player"><b><i> remaining: </i></b><input class="small" type="number" ng-model="Current.hd.number" ng-click="Current.$save(hd)"></span><br>
+						<b>Speed</b> {{ Current.speed }}<br>
+						<hr>
+						<table>
+							<tr>
+								<td><b>STR</b></td>
+								<td><b>DEX</b></td>
+								<td><b>CON</b></td>
+								<td><b>INT</b></td>
+								<td><b>WIS</b></td>
+								<td><b>CHA</b></td>
+							</tr>
+							<tr>
+								<td ng-repeat="v in Current.scores">{{ v }} ({{ v | scores }})</td>
+							</tr>		
+						</table> 
+						<hr>
+						<span ng-if="Current.saves"><b>Saving Throws</b> {{ Current.saves }}<br></span>
+						<span ng-if="Current.skills"><b>Skills</b> {{ Current.skills }}<br></span>
+						<span ng-if="Current.resistances"><b>Damage Resistances</b> {{ Current.resistances }}<br></span>
+						<span ng-if="Current.immunities"><b>Damage Immunities</b> {{ Current.immunities }}<br></span>
+						<span ng-if="Current.conditionimmune"><b>Condition Immunities</b> {{ Current.conditionimmune }}<br></span>
+						<span ng-if="Current.vulnerabilities"><b>Vulnerabilites</b> {{ Current.vulnerabilities }}<br></span>
+						<span ng-if="Current.senses"><b>Senses</b> {{ Current.senses }}<br></span>
+						<span ng-if="Current.languages"><b>Languages</b> {{ Current.languages }}<br></span>
+						<span ng-if="Current.challenge"><b>Challenge</b> {{ Current.challenge }}<br></span>
+						<hr>					
+						<span ng-if="Current.spell"><b><i>Spellcasting:</i></b> They are a {{ Current.spell.level }} level spellcaster, their spellcasting ability is {{ Current.spell.ability }} (spell save DC {{ Current.spell.save }}, {{ Current.spell.tohit }} to hit with spell attacks). They have the following {{ Current.spell.class }} spells prepared:<br><br>
+							<span ng-repeat="(level, desc) in Current.spell.spells">{{ level }} (
+								<input ng-if="desc.slots" type="checkbox" ng-model="Current.spell.spells[level].slots[$index]" ng-repeat="t in Current.spell.spells[level].slots track by $index" ng-checked="t" ng-click="Current.spell.spells[level].slots[$index] = !t; Current.$save(spell)" ng-model-options="{ updateOn: 'default blur', debounce: {'default': 1000, 'blur': 0} }">
+							) : <i>{{ desc.known }}</i><br></span><br>
+						</span>
+						<span ng-if="Current.abilities" ng-repeat="(name, desc) in Current.abilities">
+								<b><i><a href=# ng-init="Current.abilities[name].c = false" ng-click="Current.abilities[name].c = !Current.abilities[name].c">{{ name }}</a>
+									<span ng-if="desc.slots"> (
+										<input ng-if="!desc.slots.max" type="checkbox" ng-model="Current.abilities[name].slots[$index]" ng-repeat="t in Current.abilities[name].slots track by $index" ng-checked="t" ng-click="Current.abilities[name].slots[$index] = !t; Current.$save(abilities)" ng-model-options="{ updateOn: 'default blur', debounce: {'default': 1000, 'blur': 0} }">
+										<span ng-if="desc.slots.max"><input class="small" type="number" ng-model="Current.abilities[name].slots.current" ng-click="Current.$save(abilities)">/ {{ desc.slots.max }}</span>
+									)</span>.
+								</i></b>
+							<span ng-show="Current.abilities[name].c">{{ desc.description }}</span>
+						<br><br>
+						</span>
+						<span ng-if="Current.actions" id="head"><b>Actions</b><br></span>
+						<hr>
+						<span ng-if="Current.actions" ng-repeat="(name, desc) in Current.actions">
+							<b><i>{{ name }}
+								<span ng-if="desc.slots">(
+									<input ng-if="!desc.slots.max" type="checkbox" ng-model="Current.actions[name].slots[$index]" ng-repeat="t in Current.actions[name].slots track by $index" ng-checked="t" ng-click="Current.actions[name].slots[$index] = !t; Current.$save(actions)" ng-model-options="{ updateOn: 'default blur', debounce: {'default': 1000, 'blur': 0} }">
+									<span ng-if="desc.slots.max"><input class="small" type="number" ng-model="Current.actions[name].slots.current" ng-click="Current.$save(actions)">/ {{ desc.slots.max }}</span>
+								).</span>
+							</i></b>
+							<span ng-if="Current.actions[name].attack"><i>{{ desc.range }} Weapon Attack: </i>{{ desc.tohit }} to hit, {{ desc.reach }}, {{ desc.targets }}. <i>Hit:</i> {{ desc.hit }}.</span>
+							<span ng-if="Current.actions[name].description">{{ desc.descriptions }}.</span>
+						<br><br></span>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>		
+	</body>
+</html>

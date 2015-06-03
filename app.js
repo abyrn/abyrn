@@ -21,7 +21,10 @@ angular.module('app').controller('InitCtrl', function ($scope, $firebaseArray, $
 		for(i = 0; i < hd[0]; i++){
 			hp = hp + Math.floor(Math.random() * hd[1]) + 1
 		};
-		hp = eval(hp + hd[2] + hd[3]);
+		if (hd[3]) {
+			hp = eval(hp + hd[2] + hd[3]);
+			window.alert(hp)
+		};
 		copyCharacter.hp = {};
 		copyCharacter.hp.max = hp; 
 		copyCharacter.hp.current = hp;

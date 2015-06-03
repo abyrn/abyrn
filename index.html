@@ -72,7 +72,7 @@
 								<td><b>CHA</b></td>
 							</tr>
 							<tr>
-								<td ng-repeat="v in Current.scores">{{ v }} ({{ v | scores }})</td>
+								<td ng-repeat="v in Current.scores track by $index">{{ Current.scores[$index] }} ({{ Current.scores[$index] | scores }})</td>
 							</tr>		
 						</table> 
 						<hr>
@@ -87,9 +87,9 @@
 						<span ng-if="Current.challenge"><b>Challenge</b> {{ Current.challenge }}<br></span>
 						<hr>					
 						<span ng-if="Current.spell"><b><i>Spellcasting:</i></b> They are a {{ Current.spell.level }} level spellcaster, their spellcasting ability is {{ Current.spell.ability }} (spell save DC {{ Current.spell.save }}, {{ Current.spell.tohit }} to hit with spell attacks). They have the following {{ Current.spell.class }} spells prepared:<br><br>
-							<span ng-repeat="(level, desc) in Current.spell.spells">{{ level }} (
-								<input ng-if="desc.slots" type="checkbox" ng-model="Current.spell.spells[level].slots[$index]" ng-repeat="t in Current.spell.spells[level].slots track by $index" ng-checked="t" ng-click="Current.spell.spells[level].slots[$index] = !t; Current.$save(spell)" ng-model-options="{ updateOn: 'default blur', debounce: {'default': 1000, 'blur': 0} }">
-							) : <i>{{ desc.known }}</i><br></span><br>
+							<span ng-repeat="(level, desc) in Current.spell.spells">{{ level }} 
+								<span ng-if="desc.slots">(<input type="checkbox" ng-model="Current.spell.spells[level].slots[$index]" ng-repeat="t in Current.spell.spells[level].slots track by $index" ng-checked="t" ng-click="Current.spell.spells[level].slots[$index] = !t; Current.$save(spell)" ng-model-options="{ updateOn: 'default blur', debounce: {'default': 1000, 'blur': 0} }">
+							)</span> : <i>{{ desc.known }}</i><br></span><br>
 						</span>
 						<span ng-if="Current.abilities" ng-repeat="(name, desc) in Current.abilities">
 								<b><i><a href=# ng-init="Current.abilities[name].c = false" ng-click="Current.abilities[name].c = !Current.abilities[name].c">{{ name }}</a>
@@ -108,10 +108,10 @@
 								<span ng-if="desc.slots">(
 									<input ng-if="!desc.slots.max" type="checkbox" ng-model="Current.actions[name].slots[$index]" ng-repeat="t in Current.actions[name].slots track by $index" ng-checked="t" ng-click="Current.actions[name].slots[$index] = !t; Current.$save(actions)" ng-model-options="{ updateOn: 'default blur', debounce: {'default': 1000, 'blur': 0} }">
 									<span ng-if="desc.slots.max"><input class="small" type="number" ng-model="Current.actions[name].slots.current" ng-click="Current.$save(actions)">/ {{ desc.slots.max }}</span>
-								).</span>
+								)</span>.
 							</i></b>
 							<span ng-if="Current.actions[name].attack"><i>{{ desc.range }} Weapon Attack: </i>{{ desc.tohit }} to hit, {{ desc.reach }}, {{ desc.targets }}. <i>Hit:</i> {{ desc.hit }}.</span>
-							<span ng-if="Current.actions[name].description">{{ desc.descriptions }}.</span>
+							<span ng-if="Current.actions[name].description">{{ desc.description }}</span>
 						<br><br></span>
 						</div>
 					</div>

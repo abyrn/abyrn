@@ -23,7 +23,6 @@ angular.module('app').controller('InitCtrl', function ($scope, $firebaseArray, $
 		};
 		if (hd[3]) {
 			hp = eval(hp + hd[2] + hd[3]);
-			window.alert(hp)
 		};
 		copyCharacter.hp = {};
 		copyCharacter.hp.max = hp; 

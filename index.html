@@ -107,7 +107,7 @@
 							<b><i>{{ name }}
 								<span ng-if="desc.slots">(
 									<input ng-if="!desc.slots.max" type="checkbox" ng-model="Current.actions[name].slots[$index]" ng-repeat="t in Current.actions[name].slots track by $index" ng-checked="t" ng-click="Current.actions[name].slots[$index] = !t; Current.$save(actions)" ng-model-options="{ updateOn: 'default blur', debounce: {'default': 1000, 'blur': 0} }">
-									<span ng-if="desc.slots.max"><input class="small" type="number" ng-model="Current.actions[name].slots.current" ng-click="Current.$save(actions)" ng-model-options="{ updateOn: 'default blur', debounce: {'default': 1000, 'blur': 0} }">/ {{ desc.slots.max }}</span>
+									<span ng-if="desc.slots.max"><input class="small" type="number" ng-model="Current.actions[name].slots.current" ng-click="Current.$save(actions)" ng-model-options="{ updateOn: 'default blur', debounce: {'default': 0, 'blur': 0} }">/ {{ desc.slots.max }}</span>
 								)</span>.
 							</i></b>
 							<span ng-if="Current.actions[name].attack"><i>{{ desc.range }} Weapon Attack: </i>{{ desc.tohit }} to hit, {{ desc.reach }}, {{ desc.targets }}. <i>Hit:</i> {{ desc.hit }}.</span>

@@ -33,7 +33,7 @@
 								<td><b>Current</b></td>
 								<td><b>Conditions</b></td>
 							</tr>
-							<tr ng-repeat="character in Characters | orderBy:'-initiative'">
+							<tr ng-repeat="character in Characters | orderBy:'-initiative'" ng-if="!character.inactive">
 								<td id="col1"><button ng-if="!character.player" type="button" ng-click="Characters.$remove(character)">x</button></td>
 								<td><input size='4' type="number" ng-model="character.initiative" ng-change="Characters.$save(character)" ng-model-options="{ updateOn: 'default blur', debounce: {'default': 1000, 'blur': 0} }"></td>
 								<td><a href=# ng-click="CurrentCharacter(character)">{{ character.name }}</a></td>
